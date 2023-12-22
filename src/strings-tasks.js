@@ -20,6 +20,9 @@
  *   getStringLength(undefined) => 0
  */
 function getStringLength(value) {
+  if (value === null || value === undefined) {
+    return 0;
+  }
   return value.length;
 }
 
@@ -38,7 +41,7 @@ function getStringLength(value) {
  *   isString(new String('test')) => true
  */
 function isString(value) {
-  return Object.prototype.toString.call(value);
+  return typeof value === 'string' || value instanceof String;
 }
 
 /**
@@ -69,7 +72,7 @@ function concatenateStrings(value1, value2) {
  *   getFirstChar('') => ''
  */
 function getFirstChar(value) {
-  return value.substring(0, 1);
+  return value.charAt(0);
 }
 
 /**
@@ -99,7 +102,7 @@ function removeLeadingAndTrailingWhitespaces(value) {
  *   removeLeadingWhitespaces('\t\t\tHello, World! ') => 'Hello, World! '
  */
 function removeLeadingWhitespaces(value) {
-  return value.trim();
+  return value.replace(/^\s+/, '');
 }
 
 /**
@@ -114,7 +117,7 @@ function removeLeadingWhitespaces(value) {
  *   removeTrailingWhitespaces('\t\t\tHello, World! ') => '\t\t\tHello, World!'
  */
 function removeTrailingWhitespaces(value) {
-  return value.trim();
+  return value.replace(/\s+$/, '');
 }
 
 /**
@@ -167,7 +170,11 @@ function removeFirstOccurrences(str, value) {
  *   removeLastOccurrences('ABABAB', 'BA') => 'ABAB'.
  */
 function removeLastOccurrences(str, value) {
-  return str.replace(value, '');
+  const lastIndex = str.lastIndexOf(value);
+  if (lastIndex === -1) {
+    return str;
+  }
+  return str.substring(0, lastIndex) + str.substring(lastIndex + value.length);
 }
 
 /**
@@ -205,9 +212,6 @@ function sumOfCodes(str) {
  *   startsWith('Hello World', 'Hello') => true
  */
 function startsWith(str, substr) {
-  if (!str || !substr) {
-    return false;
-  }
   return str.startsWith(substr);
 }
 
@@ -223,9 +227,6 @@ function startsWith(str, substr) {
  *   endsWith('Hello World', 'Hello') => false
  */
 function endsWith(str, substr) {
-  if (!str || !substr) {
-    return false;
-  }
   return str.endsWith(substr);
 }
 
@@ -307,15 +308,15 @@ function containsSubstring(str, substring) {
  *   countVowels('aEiOu') => 5
  *   countVowels('XYZ') => 1
  */
-function countVowels() {
-  // const vowels = 'aeiouyAEIOUY';
-  // let count = 0;
-  // Array.from(str).forEach(char => {
-  //   if (vowels.includes(char)) {
-  //     count += 1;
-  //   }
-  // });
-  // return count;
+function countVowels(str) {
+  const vowels = 'aeiouyAEIOUY';
+  let count = 0;
+  Array.from(str).forEach((char) => {
+    if (vowels.includes(char)) {
+      count += 1;
+    }
+  });
+  return count;
 }
 
 /**
@@ -350,10 +351,19 @@ function isPalindrome(str) {
  *   findLongestWord('A long and winding road') => 'winding'
  *   findLongestWord('No words here') => 'words'
  */
-function findLongestWord(/* sentence */) {
-  throw new Error('Not implemented');
+function findLongestWord(sentence) {
+  const words = sentence.split(' ');
+  let longestWord = '';
+  let maxLength = 0;
+  words.forEach((word) => {
+    const { length } = word.replace(/[^a-zA-Z]/g, '');
+    if (length > maxLength) {
+      maxLength = length;
+      longestWord = word.replace(/[^a-zA-Z]/g, '');
+    }
+  });
+  return longestWord;
 }
-
 /**
  * Returns the string where each word is reversed.
  *
@@ -364,10 +374,13 @@ function findLongestWord(/* sentence */) {
  *   reverseWords('Hello World') => 'olleH dlroW'
  *   reverseWords('The Quick Brown Fox') => 'ehT kciuQ nworB xoF'
  */
-function reverseWords(/* str */) {
-  throw new Error('Not implemented');
+function reverseWords(str) {
+  let reversedString = '';
+  for (let i = str.length - 1; i >= 0; i -= 1) {
+    reversedString += str[i];
+  }
+  return reversedString;
 }
-
 /**
  * Inverts the case of each character in the given string.
  *
@@ -379,8 +392,16 @@ function reverseWords(/* str */) {
  *   invertCase('JavaScript is Fun') => 'jAVAsCRIPT IS fUN'
  *   invertCase('12345') => '12345'
  */
-function invertCase(/* str */) {
-  throw new Error('Not implemented');
+function invertCase(str) {
+  return str
+    .split('')
+    .map((char) => {
+      if (char === char.toUpperCase()) {
+        return char.toLowerCase();
+      }
+      return char.toUpperCase();
+    })
+    .join('');
 }
 
 /**
